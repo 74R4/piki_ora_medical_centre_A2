@@ -12,4 +12,17 @@ urlpatterns = [
     path("my-appointments/", views.my_appointments, name="my_appointments"),
     path("my-appointments/<int:appointment_id>/edit/", views.edit_my_appointment, name="edit_my_appointment"),
     path("my-appointments/<int:appointment_id>/cancel/", views.cancel_my_appointment, name="cancel_my_appointment"),
+
+    # Custom administrator dashboard
+    path("dashboard/", views.dashboard_home, name="dashboard_home"),
+
+    path("dashboard/doctors/", views.dashboard_doctors, name="dashboard_doctors"),
+    path("dashboard/doctors/add/", views.dashboard_doctor_add, name="dashboard_doctor_add"),
+    path("dashboard/doctors/<int:doctor_id>/edit/", views.dashboard_doctor_edit, name="dashboard_doctor_edit"),
+    path("dashboard/doctors/<int:doctor_id>/delete/", views.dashboard_doctor_delete, name="dashboard_doctor_delete"),
+
+    path("dashboard/slots/", views.dashboard_slots, name="dashboard_slots"),
+    path("dashboard/slots/add/", views.dashboard_slot_add, name="dashboard_slot_add"),
+    path("dashboard/slots/<int:slot_id>/edit/", views.dashboard_slot_edit, name="dashboard_slot_edit"),
+    path("dashboard/slots/<int:slot_id>/delete/", views.dashboard_slot_delete, name="dashboard_slot_delete"),
 ]

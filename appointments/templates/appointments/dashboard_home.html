@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="page-title mb-4">Custom Administrator Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h4>{{ doctor_count }}</h4>
+            <p>Doctors</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h4>{{ slot_count }}</h4>
+            <p>Appointment Slots</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h4>{{ appointment_count }}</h4>
+            <p>Appointments</p>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 text-center">
+            <h4>{{ patient_count }}</h4>
+            <p>Patients</p>
+        </div>
+    </div>
+</div>
+
+<div class="card p-4">
+    <h4>Management Options</h4>
+
+    <div class="mt-3">
+        <a href="{% url 'dashboard_doctors' %}" class="btn btn-primary">
+            Manage Doctors
+        </a>
+
+        <a href="{% url 'dashboard_slots' %}" class="btn btn-primary">
+            Manage Appointment Slots
+        </a>
+    </div>
+</div>
+
+{% endblock %}

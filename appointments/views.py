@@ -1,13 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
 from django.db import IntegrityError, transaction
 
 from .models import Doctor, AppointmentSlot, Appointment
-from .forms import PatientRegistrationForm, AppointmentBookingForm, AppointmentEditForm
-
+from .forms import (
+    PatientRegistrationForm,
+    AppointmentBookingForm,
+    AppointmentEditForm,
+    DoctorForm,
+    AppointmentSlotForm,
+)
 
 def home(request):
     return render(request, "appointments/home.html")
@@ -178,4 +183,179 @@ def cancel_my_appointment(request, appointment_id):
         request,
         "appointments/cancel_my_appointment.html",
         {"appointment": appointment}
+    )
+
+
+def is_staff_user(user):
+    return user.is_authenticated and user.is_staff
+
+
+@user_passes_test(is_staff_user)
+def dashboard_home(request):
+    doctor_count = Doctor.objects.count()
+    slot_count = AppointmentSlot.objects.count()
+    appointment_count = Appointment.objects.count()
+    patient_count = Appointment.objects.values("patient").distinct().count()
+
+    return render(
+        request,
+        "appointments/dashboard_home.html",
+        {
+            "doctor_count": doctor_count,
+            "slot_count": slot_count,
+            "appointment_count": appointment_count,
+            "patient_count": patient_count,
+        }
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_doctors(request):
+    doctors = Doctor.objects.all().order_by("last_name", "first_name")
+
+    return render(
+        request,
+        "appointments/dashboard_doctors.html",
+        {"doctors": doctors}
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_doctor_add(request):
+    if request.method == "POST":
+        form = DoctorForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Doctor profile has been added successfully.")
+            return redirect("dashboard_doctors")
+    else:
+        form = DoctorForm()
+
+    return render(
+        request,
+        "appointments/dashboard_doctor_form.html",
+        {
+            "form": form,
+            "title": "Add Doctor",
+        }
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_doctor_edit(request, doctor_id):
+    doctor = get_object_or_404(Doctor, id=doctor_id)
+
+    if request.method == "POST":
+        form = DoctorForm(request.POST, instance=doctor)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Doctor profile has been updated successfully.")
+            return redirect("dashboard_doctors")
+    else:
+        form = DoctorForm(instance=doctor)
+
+    return render(
+        request,
+        "appointments/dashboard_doctor_form.html",
+        {
+            "form": form,
+            "title": "Edit Doctor",
+        }
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_doctor_delete(request, doctor_id):
+    doctor = get_object_or_404(Doctor, id=doctor_id)
+
+    if request.method == "POST":
+        doctor.delete()
+        messages.success(request, "Doctor profile has been deleted successfully.")
+        return redirect("dashboard_doctors")
+
+    return render(
+        request,
+        "appointments/dashboard_confirm_delete.html",
+        {
+            "object_name": f"Dr {doctor.first_name} {doctor.last_name}",
+            "cancel_url": "dashboard_doctors",
+        }
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_slots(request):
+    slots = AppointmentSlot.objects.select_related("doctor").order_by("date", "start_time")
+
+    return render(
+        request,
+        "appointments/dashboard_slots.html",
+        {"slots": slots}
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_slot_add(request):
+    if request.method == "POST":
+        form = AppointmentSlotForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Appointment slot has been created successfully.")
+            return redirect("dashboard_slots")
+    else:
+        form = AppointmentSlotForm()
+
+    return render(
+        request,
+        "appointments/dashboard_slot_form.html",
+        {
+            "form": form,
+            "title": "Add Appointment Slot",
+        }
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_slot_edit(request, slot_id):
+    slot = get_object_or_404(AppointmentSlot, id=slot_id)
+
+    if request.method == "POST":
+        form = AppointmentSlotForm(request.POST, instance=slot)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Appointment slot has been updated successfully.")
+            return redirect("dashboard_slots")
+    else:
+        form = AppointmentSlotForm(instance=slot)
+
+    return render(
+        request,
+        "appointments/dashboard_slot_form.html",
+        {
+            "form": form,
+            "title": "Edit Appointment Slot",
+        }
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_slot_delete(request, slot_id):
+    slot = get_object_or_404(AppointmentSlot, id=slot_id)
+
+    if request.method == "POST":
+        slot.delete()
+        messages.success(request, "Appointment slot has been deleted successfully.")
+        return redirect("dashboard_slots")
+
+    return render(
+        request,
+        "appointments/dashboard_confirm_delete.html",
+        {
+            "object_name": f"{slot.doctor} on {slot.date} at {slot.start_time}",
+            "cancel_url": "dashboard_slots",
+        }
     )
