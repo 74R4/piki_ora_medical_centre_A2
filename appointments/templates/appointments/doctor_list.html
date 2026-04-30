@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="page-title mb-4">Available Doctors</h2>
+
+<div class="row">
+    {% for doctor in doctors %}
+        <div class="col-md-4 mb-3">
+            <div class="card p-3 h-100">
+                <h5>Dr {{ doctor.first_name }} {{ doctor.last_name }}</h5>
+                <p><strong>Specialisation:</strong> {{ doctor.specialisation }}</p>
+                <p><strong>Email:</strong> {{ doctor.email }}</p>
+                <p><strong>Phone:</strong> {{ doctor.phone }}</p>
+
+                {% if doctor.room_number %}
+                    <p><strong>Room:</strong> {{ doctor.room_number }}</p>
+                {% endif %}
+
+                {% if doctor.bio %}
+                    <p>{{ doctor.bio }}</p>
+                {% endif %}
+
+                <a href="{% url 'slot_list' %}?doctor={{ doctor.id }}" class="btn btn-primary">
+                    View Appointment Slots
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <p>No doctors are currently available.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="page-title mb-4">Available Appointment Slots</h2>
+
+<form method="get" class="card p-3 mb-4">
+    <label for="doctor" class="form-label">Filter by doctor</label>
+
+    <select name="doctor" id="doctor" class="form-select mb-3">
+        <option value="">All doctors</option>
+
+        {% for doctor in doctors %}
+            <option value="{{ doctor.id }}" {% if selected_doctor == doctor.id|stringformat:"s" %}selected{% endif %}>
+                Dr {{ doctor.first_name }} {{ doctor.last_name }} - {{ doctor.specialisation }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<div class="card p-3">
+    {% if slots %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for slot in slots %}
+                    <tr>
+                        <td>Dr {{ slot.doctor.first_name }} {{ slot.doctor.last_name }}</td>
+                        <td>{{ slot.date }}</td>
+                        <td>{{ slot.start_time }}</td>
+                        <td>{{ slot.end_time }}</td>
+                        <td>
+                            <a href="#" class="btn btn-success btn-sm">
+                                Book
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No available appointment slots found.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
