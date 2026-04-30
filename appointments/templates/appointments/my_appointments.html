@@ -14,6 +14,7 @@
                     <th>Time</th>
                     <th>Reason</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
@@ -28,12 +29,26 @@
                         <td>{{ appointment.slot.start_time }} - {{ appointment.slot.end_time }}</td>
                         <td>{{ appointment.reason|default:"No reason provided" }}</td>
                         <td>{{ appointment.status }}</td>
+                        <td>
+                            {% if appointment.status == "Booked" %}
+                                <a href="{% url 'edit_my_appointment' appointment.id %}" class="btn btn-warning btn-sm">
+                                    Edit
+                                </a>
+
+                                <a href="{% url 'cancel_my_appointment' appointment.id %}" class="btn btn-danger btn-sm">
+                                    Cancel
+                                </a>
+                            {% else %}
+                                No action
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
         <p>You do not have any appointments yet.</p>
+        <a href="{% url 'slot_list' %}" class="btn btn-primary">Book Appointment</a>
     {% endif %}
 </div>
 

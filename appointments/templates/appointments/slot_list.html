@@ -41,7 +41,7 @@
                         <td>{{ slot.start_time }}</td>
                         <td>{{ slot.end_time }}</td>
                         <td>
-                            <a href="#" class="btn btn-success btn-sm">
+                            <a href="{% url 'book_appointment' slot.id %}" class="btn btn-success btn-sm">
                                 Book
                             </a>
                         </td>

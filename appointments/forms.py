@@ -67,19 +67,24 @@ class AppointmentEditForm(forms.ModelForm):
     class Meta:
         model = Appointment
         fields = ["slot", "reason", "status"]
+        widgets = {
+            "reason": forms.Textarea(attrs={"rows": 4}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         current_slot = self.instance.slot if self.instance and self.instance.pk else None
 
-        available_slots = AppointmentSlot.objects.filter(is_available=True)
+        available_slots = AppointmentSlot.objects.filter(
+            is_available=True,
+            appointment__isnull=True
+        )
 
         if current_slot:
             available_slots = available_slots | AppointmentSlot.objects.filter(pk=current_slot.pk)
 
         self.fields["slot"].queryset = available_slots.order_by("date", "start_time")
-
 
 class PatientAccountForm(forms.ModelForm):
     class Meta:
