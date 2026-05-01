@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card p-4">
+    <h2 class="page-title">Setup Not Allowed</h2>
+
+    <p>The setup token is missing or incorrect.</p>
+
+    <a href="{% url 'home' %}" class="btn btn-secondary">Go Home</a>
+</div>
+
+{% endblock %}

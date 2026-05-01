@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card p-4">
+    <h2 class="page-title">Staff Account Created</h2>
+
+    <p>The online staff account is ready.</p>
+
+    <p><strong>Username:</strong> {{ username }}</p>
+    <p><strong>Password:</strong> StaffPass123</p>
+
+    <a href="{% url 'login' %}" class="btn btn-primary">Go to Login</a>
+</div>
+
+{% endblock %}
