@@ -38,14 +38,22 @@
     <h4>Management Options</h4>
 
     <div class="mt-3">
-        <a href="{% url 'dashboard_doctors' %}" class="btn btn-primary">
-            Manage Doctors
-        </a>
+    <a href="{% url 'dashboard_doctors' %}" class="btn btn-primary mb-2">
+        Manage Doctors
+    </a>
 
-        <a href="{% url 'dashboard_slots' %}" class="btn btn-primary">
-            Manage Appointment Slots
-        </a>
-    </div>
+    <a href="{% url 'dashboard_slots' %}" class="btn btn-primary mb-2">
+        Manage Appointment Slots
+    </a>
+
+    <a href="{% url 'dashboard_appointments' %}" class="btn btn-primary mb-2">
+        Manage Appointments
+    </a>
+
+    <a href="{% url 'dashboard_patients' %}" class="btn btn-primary mb-2">
+        Manage Patients
+    </a>
+</div>
 </div>
 
 {% endblock %}

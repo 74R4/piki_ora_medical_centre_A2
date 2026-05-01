@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.utils import timezone
@@ -12,6 +13,7 @@ from .forms import (
     AppointmentEditForm,
     DoctorForm,
     AppointmentSlotForm,
+    PatientAccountForm,
 )
 
 def home(request):
@@ -176,6 +178,9 @@ def cancel_my_appointment(request, appointment_id):
         appointment.status = "Cancelled"
         appointment.save()
 
+        appointment.slot.is_available = True
+        appointment.slot.save()
+
         messages.success(request, "Your appointment has been cancelled.")
         return redirect("my_appointments")
 
@@ -184,7 +189,6 @@ def cancel_my_appointment(request, appointment_id):
         "appointments/cancel_my_appointment.html",
         {"appointment": appointment}
     )
-
 
 def is_staff_user(user):
     return user.is_authenticated and user.is_staff
@@ -357,5 +361,121 @@ def dashboard_slot_delete(request, slot_id):
         {
             "object_name": f"{slot.doctor} on {slot.date} at {slot.start_time}",
             "cancel_url": "dashboard_slots",
+        }
+    )
+
+@user_passes_test(is_staff_user)
+def dashboard_appointments(request):
+    appointments = Appointment.objects.select_related(
+        "patient",
+        "slot",
+        "slot__doctor"
+    ).order_by("slot__date", "slot__start_time")
+
+    return render(
+        request,
+        "appointments/dashboard_appointments.html",
+        {"appointments": appointments}
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_appointment_edit(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    old_slot = appointment.slot
+
+    if request.method == "POST":
+        form = AppointmentEditForm(request.POST, instance=appointment)
+
+        if form.is_valid():
+            updated_appointment = form.save(commit=False)
+            new_slot = updated_appointment.slot
+
+            if updated_appointment.status == "Cancelled":
+                old_slot.is_available = True
+                old_slot.save()
+
+            elif new_slot != old_slot:
+                old_slot.is_available = True
+                old_slot.save()
+
+                new_slot.is_available = False
+                new_slot.save()
+
+            else:
+                new_slot.is_available = False
+                new_slot.save()
+
+            updated_appointment.save()
+
+            messages.success(request, "Appointment has been updated successfully.")
+            return redirect("dashboard_appointments")
+    else:
+        form = AppointmentEditForm(instance=appointment)
+
+    return render(
+        request,
+        "appointments/dashboard_appointment_form.html",
+        {
+            "form": form,
+            "appointment": appointment,
+            "title": "Edit Appointment",
+        }
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_appointment_cancel(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+
+    if request.method == "POST":
+        appointment.status = "Cancelled"
+        appointment.save()
+
+        appointment.slot.is_available = True
+        appointment.slot.save()
+
+        messages.success(request, "Appointment has been cancelled successfully.")
+        return redirect("dashboard_appointments")
+
+    return render(
+        request,
+        "appointments/dashboard_appointment_cancel.html",
+        {"appointment": appointment}
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_patients(request):
+    patients = User.objects.filter(is_staff=False).order_by("last_name", "first_name", "username")
+
+    return render(
+        request,
+        "appointments/dashboard_patients.html",
+        {"patients": patients}
+    )
+
+
+@user_passes_test(is_staff_user)
+def dashboard_patient_edit(request, patient_id):
+    patient = get_object_or_404(User, id=patient_id, is_staff=False)
+
+    if request.method == "POST":
+        form = PatientAccountForm(request.POST, instance=patient)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Patient account has been updated successfully.")
+            return redirect("dashboard_patients")
+    else:
+        form = PatientAccountForm(instance=patient)
+
+    return render(
+        request,
+        "appointments/dashboard_patient_form.html",
+        {
+            "form": form,
+            "patient": patient,
+            "title": "Edit Patient Account",
         }
     )

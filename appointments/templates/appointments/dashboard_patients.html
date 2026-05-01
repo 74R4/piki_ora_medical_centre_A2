@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title">Manage Patient Accounts</h2>
+
+    <a href="{% url 'dashboard_home' %}" class="btn btn-secondary">
+        Back to Dashboard
+    </a>
+</div>
+
+<div class="card p-3">
+    {% if patients %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Active</th>
+                    <th>Date Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for patient in patients %}
+                    <tr>
+                        <td>{{ patient.username }}</td>
+                        <td>{{ patient.first_name }} {{ patient.last_name }}</td>
+                        <td>{{ patient.email }}</td>
+                        <td>
+                            {% if patient.is_active %}
+                                Yes
+                            {% else %}
+                                No
+                            {% endif %}
+                        </td>
+                        <td>{{ patient.date_joined }}</td>
+                        <td>
+                            <a href="{% url 'dashboard_patient_edit' patient.id %}" class="btn btn-warning btn-sm">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No patient accounts have been created yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}
