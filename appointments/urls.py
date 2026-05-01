@@ -34,5 +34,4 @@ urlpatterns = [
 
     path("dashboard/patients/", views.dashboard_patients, name="dashboard_patients"),
     path("dashboard/patients/<int:patient_id>/edit/", views.dashboard_patient_edit, name="dashboard_patient_edit"),
-    path("setup-staff/", views.setup_staff_user, name="setup_staff_user"),
 ]

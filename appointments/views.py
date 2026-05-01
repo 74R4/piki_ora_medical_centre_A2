@@ -1,4 +1,3 @@
-import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -478,34 +477,5 @@ def dashboard_patient_edit(request, patient_id):
             "form": form,
             "patient": patient,
             "title": "Edit Patient Account",
-        }
-    )
-
-def setup_staff_user(request):
-    token = request.GET.get("token")
-    expected_token = os.environ.get("SETUP_TOKEN")
-
-    if not expected_token or token != expected_token:
-        return render(request, "appointments/setup_staff_error.html")
-
-    username = "staff"
-
-    user, created = User.objects.get_or_create(username=username)
-
-    user.first_name = "Piki Ora"
-    user.last_name = "Staff"
-    user.email = "staff@pikiora.co.nz"
-    user.is_staff = True
-    user.is_superuser = True
-    user.is_active = True
-    user.set_password("StaffPass123")
-    user.save()
-
-    return render(
-        request,
-        "appointments/setup_staff_success.html",
-        {
-            "created": created,
-            "username": username,
         }
     )
