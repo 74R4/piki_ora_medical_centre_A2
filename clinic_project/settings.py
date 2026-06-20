@@ -154,4 +154,10 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://piki-ora-medical-centre-a2-frontend.vercel.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://piki-ora-medical-centre-a2-frontend.vercel.app",
+    "https://piki-ora-medical-centre-a2-backend.vercel.app",
 ]
