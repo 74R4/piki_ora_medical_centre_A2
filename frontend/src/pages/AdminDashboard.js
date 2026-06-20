@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api";
+import { Link } from "react-router-dom";
 
 function AdminDashboard() {
   const [summary, setSummary] = useState(null);
@@ -27,8 +28,21 @@ function AdminDashboard() {
   }
 
   return (
-    <div className="page">
-      <h2>Admin Dashboard</h2>
+      <div className="page">
+        <h2>Admin Dashboard</h2>
+        <div style={{marginBottom: "20px"}}>
+          <Link to="/admin/doctors">
+            <button>Manage Doctors</button>
+          </Link>
+          {" "}
+          <Link to="/admin/slots">
+            <button>Manage Slots</button>
+          </Link>
+          {" "}
+          <Link to="/admin/appointments">
+            <button>Manage Appointments</button>
+          </Link>
+        </div>
 
       <div className="dashboard-grid">
         <div className="dashboard-card">
