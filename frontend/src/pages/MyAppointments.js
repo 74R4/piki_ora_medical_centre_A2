@@ -14,6 +14,23 @@ function MyAppointments() {
       setAppointments(response.data);
     } catch (error) {
       console.error(error);
+      alert("Please log in to view your appointments.");
+    }
+  };
+
+  const cancelAppointment = async (id) => {
+    const confirmCancel = window.confirm(
+      "Are you sure you want to cancel this appointment?"
+    );
+
+    if (!confirmCancel) return;
+
+    try {
+      await API.post(`appointments/${id}/cancel/`);
+      alert("Appointment cancelled successfully.");
+      fetchAppointments();
+    } catch (error) {
+      alert("Could not cancel appointment.");
     }
   };
 
@@ -25,14 +42,7 @@ function MyAppointments() {
         <p>No appointments found.</p>
       ) : (
         appointments.map((appointment) => (
-          <div
-            key={appointment.id}
-            style={{
-              border: "1px solid #ccc",
-              marginBottom: "10px",
-              padding: "10px",
-            }}
-          >
+          <div className="card" key={appointment.id}>
             <h3>{appointment.doctor_name}</h3>
 
             <p>
@@ -40,7 +50,7 @@ function MyAppointments() {
             </p>
 
             <p>
-              <strong>Time:</strong> {appointment.start_time}
+              <strong>Time:</strong> {appointment.start_time} - {appointment.end_time}
             </p>
 
             <p>
@@ -50,6 +60,12 @@ function MyAppointments() {
             <p>
               <strong>Reason:</strong> {appointment.reason}
             </p>
+
+            {appointment.status !== "Cancelled" && (
+              <button onClick={() => cancelAppointment(appointment.id)}>
+                Cancel Appointment
+              </button>
+            )}
           </div>
         ))
       )}
