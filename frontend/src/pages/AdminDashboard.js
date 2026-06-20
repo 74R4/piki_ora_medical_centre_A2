@@ -30,24 +30,26 @@ function AdminDashboard() {
     <div className="page">
       <h2>Admin Dashboard</h2>
 
-      <div style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
-        <h3>Total Doctors</h3>
-        <p>{summary.doctor_count}</p>
-      </div>
+      <div className="dashboard-grid">
+        <div className="dashboard-card">
+          <h3>Total Doctors</h3>
+          <p>{summary.doctor_count}</p>
+        </div>
 
-      <div style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
-        <h3>Total Appointment Slots</h3>
-        <p>{summary.slot_count}</p>
-      </div>
+        <div className="dashboard-card">
+          <h3>Total Appointment Slots</h3>
+          <p>{summary.slot_count}</p>
+        </div>
 
-      <div style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
-        <h3>Total Appointments</h3>
-        <p>{summary.appointment_count}</p>
-      </div>
+        <div className="dashboard-card">
+          <h3>Total Appointments</h3>
+          <p>{summary.appointment_count}</p>
+        </div>
 
-      <div style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
-        <h3>Total Patients</h3>
-        <p>{summary.patient_count}</p>
+        <div className="dashboard-card">
+          <h3>Total Patients</h3>
+          <p>{summary.patient_count}</p>
+        </div>
       </div>
     </div>
   );
