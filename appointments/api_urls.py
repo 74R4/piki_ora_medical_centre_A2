@@ -20,6 +20,7 @@ router.register(r'appointments', AppointmentViewSet, basename='appointment')
 router.register(r'patients', PatientViewSet, basename='patient')
 
 urlpatterns = [
+    path('auth/', include('rest_framework.urls')),
     path('register/', RegisterAPIView.as_view(), name='api_register'),
     path('login/', LoginAPIView.as_view(), name='api_login'),
     path('me/', CurrentUserAPIView.as_view(), name='api_me'),
