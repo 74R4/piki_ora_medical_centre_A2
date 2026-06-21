@@ -64,13 +64,11 @@ https://piki-ora-medical-centre-a2-frontend.vercel.app
 Backend:
 https://piki-ora-medical-centre-a2-backend.vercel.app
 
-## Test Staff Account
+## Default Staff Account
 
-Username:
-staff
+Username: staff
 
-Password:
-StaffPass123
+Password: StaffPass123
 
 ## Installation
 
