@@ -1,3 +1,5 @@
+import os
+from datetime import date, time
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import IntegrityError, transaction
@@ -263,4 +265,136 @@ class PatientViewSet(viewsets.ModelViewSet):
             "last_name",
             "first_name",
             "username",
+        )
+
+
+class TemporarySetupAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        setup_token = os.environ.get("SETUP_TOKEN")
+        request_token = request.query_params.get("token")
+
+        if not setup_token or request_token != setup_token:
+            return Response(
+                {"error": "Invalid setup token."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Create staff/admin user for marking
+        staff_user, created = User.objects.get_or_create(username="staff")
+        staff_user.is_staff = True
+        staff_user.is_superuser = True
+        staff_user.is_active = True
+        staff_user.email = "staff@pikiora.co.nz"
+        staff_user.first_name = "Staff"
+        staff_user.last_name = "Admin"
+        staff_user.set_password("StaffPass123")
+        staff_user.save()
+
+        doctors_data = [
+            {
+                "first_name": "Sarah",
+                "last_name": "Wilson",
+                "specialisation": "General Practitioner",
+                "email": "sarah.wilson@pikiora.co.nz",
+                "phone": "0211234567",
+                "room_number": "Room 1",
+                "bio": "Dr Sarah Wilson provides general health consultations for patients.",
+            },
+            {
+                "first_name": "Michael",
+                "last_name": "Brown",
+                "specialisation": "Cardiology",
+                "email": "michael.brown@pikiora.co.nz",
+                "phone": "0211111111",
+                "room_number": "Room 2",
+                "bio": "Dr Michael Brown specialises in heart and cardiovascular conditions.",
+            },
+            {
+                "first_name": "Emma",
+                "last_name": "Taylor",
+                "specialisation": "Dermatology",
+                "email": "emma.taylor@pikiora.co.nz",
+                "phone": "0212222222",
+                "room_number": "Room 3",
+                "bio": "Dr Emma Taylor specialises in skin health and treatment.",
+            },
+            {
+                "first_name": "James",
+                "last_name": "Anderson",
+                "specialisation": "Paediatrics",
+                "email": "james.anderson@pikiora.co.nz",
+                "phone": "0213333333",
+                "room_number": "Room 4",
+                "bio": "Dr James Anderson provides healthcare services for children.",
+            },
+            {
+                "first_name": "Olivia",
+                "last_name": "Martin",
+                "specialisation": "Orthopaedics",
+                "email": "olivia.martin@pikiora.co.nz",
+                "phone": "0214444444",
+                "room_number": "Room 5",
+                "bio": "Dr Olivia Martin specialises in bone and joint conditions.",
+            },
+            {
+                "first_name": "William",
+                "last_name": "Lee",
+                "specialisation": "Neurology",
+                "email": "william.lee@pikiora.co.nz",
+                "phone": "0215555555",
+                "room_number": "Room 6",
+                "bio": "Dr William Lee specialises in disorders of the nervous system.",
+            },
+        ]
+
+        doctors = []
+
+        for doctor_data in doctors_data:
+            doctor, created = Doctor.objects.update_or_create(
+                email=doctor_data["email"],
+                defaults={
+                    "first_name": doctor_data["first_name"],
+                    "last_name": doctor_data["last_name"],
+                    "specialisation": doctor_data["specialisation"],
+                    "phone": doctor_data["phone"],
+                    "room_number": doctor_data["room_number"],
+                    "bio": doctor_data["bio"],
+                    "is_active": True,
+                },
+            )
+            doctors.append(doctor)
+
+        slots_data = [
+            (0, date(2026, 7, 1), time(9, 0), time(9, 30)),
+            (0, date(2026, 7, 1), time(10, 0), time(10, 30)),
+            (1, date(2026, 7, 1), time(9, 0), time(9, 30)),
+            (1, date(2026, 7, 1), time(11, 0), time(11, 30)),
+            (2, date(2026, 7, 2), time(9, 30), time(10, 0)),
+            (3, date(2026, 7, 2), time(10, 30), time(11, 0)),
+            (4, date(2026, 7, 3), time(9, 0), time(9, 30)),
+            (5, date(2026, 7, 3), time(10, 0), time(10, 30)),
+        ]
+
+        for doctor_index, slot_date, start_time, end_time in slots_data:
+            AppointmentSlot.objects.get_or_create(
+                doctor=doctors[doctor_index],
+                date=slot_date,
+                start_time=start_time,
+                defaults={
+                    "end_time": end_time,
+                    "is_available": True,
+                },
+            )
+
+        return Response(
+            {
+                "message": "Temporary setup completed successfully.",
+                "staff_username": "staff",
+                "staff_password": "StaffPass123",
+                "doctor_count": Doctor.objects.count(),
+                "slot_count": AppointmentSlot.objects.count(),
+                "patient_count": User.objects.filter(is_staff=False).count(),
+            }
         )
