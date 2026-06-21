@@ -6,7 +6,6 @@ from .api_views import (
     LoginAPIView,
     CurrentUserAPIView,
     DashboardSummaryAPIView,
-    TemporarySetupAPIView,
     DoctorViewSet,
     AppointmentSlotViewSet,
     AppointmentViewSet,
@@ -27,7 +26,6 @@ urlpatterns = [
     path('login/', LoginAPIView.as_view(), name='api_login'),
     path('me/', CurrentUserAPIView.as_view(), name='api_me'),
     path('dashboard-summary/', DashboardSummaryAPIView.as_view(), name='dashboard_summary'),
-    path('temporary-setup/', TemporarySetupAPIView.as_view(), name='temporary_setup'),
 
     path('', include(router.urls)),
 ]
