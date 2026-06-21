@@ -1,15 +1,9 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "./build.sh",
+  "rewrites": [
     {
-      "src": "clinic_project/wsgi.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "clinic_project/wsgi.py"
+      "source": "/(.*)",
+      "destination": "/clinic_project/wsgi.py"
     }
   ]
 }
