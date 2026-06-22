@@ -3,6 +3,8 @@ import API from "../api";
 
 function MyAppointments() {
   const [appointments, setAppointments] = useState([]);
+  const [editingAppointmentId, setEditingAppointmentId] = useState(null);
+  const [reason, setReason] = useState("");
 
   useEffect(() => {
     fetchAppointments();
@@ -15,6 +17,32 @@ function MyAppointments() {
     } catch (error) {
       console.error(error);
       alert("Please log in to view your appointments.");
+    }
+  };
+
+  const startEdit = (appointment) => {
+    setEditingAppointmentId(appointment.id);
+    setReason(appointment.reason);
+  };
+
+  const cancelEdit = () => {
+    setEditingAppointmentId(null);
+    setReason("");
+  };
+
+  const updateAppointment = async (e) => {
+    e.preventDefault();
+
+    try {
+      await API.patch(`appointments/${editingAppointmentId}/`, {
+        reason: reason,
+      });
+
+      alert("Appointment updated successfully.");
+      cancelEdit();
+      fetchAppointments();
+    } catch (error) {
+      alert("Could not update appointment.");
     }
   };
 
@@ -37,6 +65,25 @@ function MyAppointments() {
   return (
     <div className="page">
       <h2>My Appointments</h2>
+
+      {editingAppointmentId && (
+        <form onSubmit={updateAppointment} className="card">
+          <h3>Edit Appointment Reason</h3>
+
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Update appointment reason"
+          />
+
+          <br /><br />
+
+          <button type="submit">Update Appointment</button>{" "}
+          <button type="button" onClick={cancelEdit}>
+            Cancel Edit
+          </button>
+        </form>
+      )}
 
       {appointments.length === 0 ? (
         <p>No appointments found.</p>
@@ -62,9 +109,15 @@ function MyAppointments() {
             </p>
 
             {appointment.status !== "Cancelled" && (
-              <button onClick={() => cancelAppointment(appointment.id)}>
-                Cancel Appointment
-              </button>
+              <>
+                <button onClick={() => startEdit(appointment)}>
+                  Edit Appointment
+                </button>{" "}
+
+                <button onClick={() => cancelAppointment(appointment.id)}>
+                  Cancel Appointment
+                </button>
+              </>
             )}
           </div>
         ))
