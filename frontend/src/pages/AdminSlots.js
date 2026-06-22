@@ -200,3 +200,5 @@ function AdminSlots() {
 }
 
 export default AdminSlots;
+
+// adding edit/update button
