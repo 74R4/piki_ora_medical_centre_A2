@@ -1,47 +1,92 @@
 # Piki Ora Medical Centre Appointment System
 
-This is a Django web application developed for ISCG7420 Web Application Development Assignment 1 Task 2.
+## Overview
 
-The system allows patients to register, log in, view doctors, view available appointment slots, book appointments, and manage their own appointments.
+Piki Ora Medical Centre Appointment System is a full-stack web application developed for Assignment 2.
 
-The system also includes a custom administrator dashboard for authorised staff. The custom dashboard is used instead of relying on the built-in Django Admin site for system management.
+The system allows patients to:
 
-## Main Features
+* Register an account
+* Login securely
+* View available doctors
+* View appointment slots
+* Book appointments
+* View their appointments
+* Cancel appointments
 
-### Patient Features
-- Patient registration
-- Patient login and logout
-- View available doctors
-- View available appointment slots
-- Book an appointment
-- View upcoming appointments
-- Edit appointment
-- Cancel appointment
+The system allows staff/administrators to:
 
-### Custom Administrator Dashboard Features
-- Secure staff-only dashboard
-- Add, edit, and delete doctor profiles
-- Create, edit, and delete appointment slots
-- View all patient appointments
-- Edit or cancel patient appointments
-- View and manage patient user accounts
+* Manage doctors
+* Manage appointment slots
+* Manage appointments
+* View dashboard statistics
 
-## Technical Features
+## Technologies Used
 
-- Django framework
-- SQLite database for development
-- Django ORM for database access
-- Django authentication system
-- Role-based access control
-- Dynamic templates
-- Form handling and validation
-- Double-booking prevention using a one-to-one relationship between appointments and appointment slots
+### Frontend
 
-## How to Run the Project Locally
+* React
+* Axios
+* React Router
 
-1. Create and activate a virtual environment.
+### Backend
 
-2. Install dependencies:
+* Django
+* Django REST Framework
+* Token Authentication
+
+### Database
+
+* PostgreSQL (Neon)
+
+### Deployment
+
+* Frontend: Vercel
+* Backend: Vercel
+
+## Features
+
+* User Registration
+* User Login
+* Token Authentication
+* Doctor Management
+* Appointment Slot Management
+* Appointment Booking
+* Appointment Cancellation
+* Admin Dashboard
+* REST API Integration
+
+## Deployment Links
+
+Frontend:
+https://piki-ora-medical-centre-a2-frontend.vercel.app
+
+Backend:
+https://piki-ora-medical-centre-a2-backend.vercel.app
+
+## Default Staff Account
+
+Username: staff
+
+Password: StaffPass123
+
+## Installation
+
+Backend:
 
 ```bash
 pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+## Author
+Natara Iata Pimoe
